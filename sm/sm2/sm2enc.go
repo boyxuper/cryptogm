@@ -8,7 +8,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
-	"github.com/xlcetc/cryptogm/sm/sm3"
+	"github.com/boyxuper/cryptogm/sm/sm3"
 	"io"
 	"math"
 	"math/big"
@@ -172,7 +172,7 @@ func Decrypt(c []byte, key *PrivateKey) ([]byte, error) {
 	return t, nil
 }
 
-//uncompressed form, s=04||x||y
+// uncompressed form, s=04||x||y
 func pointToBytes(x, y *big.Int) []byte {
 	buf := []byte{}
 

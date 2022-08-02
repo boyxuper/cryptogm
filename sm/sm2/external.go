@@ -7,7 +7,7 @@ package sm2
 import (
 	"crypto/rand"
 	"encoding/asn1"
-	"github.com/xlcetc/cryptogm/elliptic/sm2curve"
+	"github.com/boyxuper/cryptogm/elliptic/sm2curve"
 	"io"
 	"math/big"
 )

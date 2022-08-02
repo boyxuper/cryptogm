@@ -10,8 +10,8 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"errors"
-	"github.com/xlcetc/cryptogm/elliptic/sm2curve"
-	"github.com/xlcetc/cryptogm/sm/sm3"
+	"github.com/boyxuper/cryptogm/elliptic/sm2curve"
+	"github.com/boyxuper/cryptogm/sm/sm3"
 	"io"
 	"math/big"
 )

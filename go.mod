@@ -1,4 +1,4 @@
-module github.com/xlcetc/cryptogm
+module github.com/boyxuper/cryptogm
 
 go 1.14
 

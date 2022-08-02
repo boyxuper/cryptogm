@@ -7,9 +7,9 @@ package sm9
 import (
 	"crypto/rand"
 	"encoding/binary"
+	"github.com/boyxuper/cryptogm/elliptic/sm9curve"
+	"github.com/boyxuper/cryptogm/sm/sm3"
 	"github.com/pkg/errors"
-	"github.com/xlcetc/cryptogm/elliptic/sm9curve"
-	"github.com/xlcetc/cryptogm/sm/sm3"
 	"io"
 	"math"
 	"math/big"
@@ -24,7 +24,7 @@ const (
 	H2
 )
 
-//MasterKey contains a master secret key and a master public key.
+// MasterKey contains a master secret key and a master public key.
 type MasterKey struct {
 	Msk *big.Int
 	MasterPubKey
@@ -34,18 +34,18 @@ type MasterPubKey struct {
 	Mpk *sm9curve.G2
 }
 
-//UserKey contains a secret key.
+// UserKey contains a secret key.
 type UserKey struct {
 	Sk *sm9curve.G1
 }
 
-//Sm9Sig contains a big number and an element in G1.
+// Sm9Sig contains a big number and an element in G1.
 type Sm9Sig struct {
 	H *big.Int
 	S *sm9curve.G1
 }
 
-//hash implements H1(Z,n) or H2(Z,n) in sm9 algorithm.
+// hash implements H1(Z,n) or H2(Z,n) in sm9 algorithm.
 func hash(z []byte, n *big.Int, h hashMode) *big.Int {
 	//counter
 	ct := 1
@@ -76,7 +76,7 @@ func hash(z []byte, n *big.Int, h hashMode) *big.Int {
 	return bn
 }
 
-//generate rand numbers in [1,n-1].
+// generate rand numbers in [1,n-1].
 func randFieldElement(rand io.Reader, n *big.Int) (k *big.Int, err error) {
 	one := big.NewInt(1)
 	b := make([]byte, 256/8+8)
@@ -90,7 +90,7 @@ func randFieldElement(rand io.Reader, n *big.Int) (k *big.Int, err error) {
 	return
 }
 
-//generate master key for KGC(Key Generate Center).
+// generate master key for KGC(Key Generate Center).
 func MasterKeyGen(rand io.Reader) (mk *MasterKey, err error) {
 	s, err := randFieldElement(rand, sm9curve.Order)
 	if err != nil {
@@ -105,7 +105,7 @@ func MasterKeyGen(rand io.Reader) (mk *MasterKey, err error) {
 	return
 }
 
-//generate user's secret key.
+// generate user's secret key.
 func UserKeyGen(mk *MasterKey, id []byte, hid byte) (uk *UserKey, err error) {
 	id = append(id, hid)
 	n := sm9curve.Order
@@ -127,13 +127,13 @@ func UserKeyGen(mk *MasterKey, id []byte, hid byte) (uk *UserKey, err error) {
 	return
 }
 
-//sm9 sign algorithm:
-//A1:compute g = e(P1,Ppub);
-//A2:choose random num r in [1,n-1];
-//A3:compute w = g^r;
-//A4:compute h = H2(M||w,n);
-//A5:compute l = (r-h) mod n, if l = 0 goto A2;
-//A6:compute S = l·sk.
+// sm9 sign algorithm:
+// A1:compute g = e(P1,Ppub);
+// A2:choose random num r in [1,n-1];
+// A3:compute w = g^r;
+// A4:compute h = H2(M||w,n);
+// A5:compute l = (r-h) mod n, if l = 0 goto A2;
+// A6:compute S = l·sk.
 func Sign(uk *UserKey, mpk *MasterPubKey, msg []byte) (sig *Sm9Sig, err error) {
 	sig = new(Sm9Sig)
 	n := sm9curve.Order
@@ -167,14 +167,14 @@ regen:
 	return
 }
 
-//sm9 verify algorithm(given sig (h',S'), message M' and user's id):
-//B1:compute g = e(P1,Ppub);
-//B2:compute t = g^h';
-//B3:compute h1 = H1(id||hid,n);
-//B4:compute P = h1·P2+Ppub;
-//B5:compute u = e(S',P);
-//B6:compute w' = u·t;
-//B7:compute h2 = H2(M'||w',n), check if h2 = h'.
+// sm9 verify algorithm(given sig (h',S'), message M' and user's id):
+// B1:compute g = e(P1,Ppub);
+// B2:compute t = g^h';
+// B3:compute h1 = H1(id||hid,n);
+// B4:compute P = h1·P2+Ppub;
+// B5:compute u = e(S',P);
+// B6:compute w' = u·t;
+// B7:compute h2 = H2(M'||w',n), check if h2 = h'.
 func Verify(sig *Sm9Sig, msg []byte, id []byte, hid byte, mpk *MasterPubKey) bool {
 	n := sm9curve.Order
 	g := sm9curve.Pair(sm9curve.Gen1, mpk.Mpk)
